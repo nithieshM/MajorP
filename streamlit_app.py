@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Flatten, Dense, Conv1D
 from sklearn.metrics import r2_score
+import seaborn as sns
 
 st.set_page_config(page_title="Stock Predictor", page_icon=":chart_with_upwards_trend:")
 
