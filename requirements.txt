@@ -4,7 +4,6 @@ streamlit
 numpy
 matplotlib
 plotly
-pyplot
 tensorflow
 yfinance
 seaborn
