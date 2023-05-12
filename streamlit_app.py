@@ -5,89 +5,60 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVC
+from keras.models import load_model
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Flatten, Dense, Conv1D
+from sklearn.metrics import r2_score
 
-
-# Set page config
 st.set_page_config(page_title="Stock Predictor", page_icon=":chart_with_upwards_trend:")
 
-# Title
-st.title("Stock Predictor")
+# Decision Tree Streamlit app
+def decision_tree_app():
+    st.title("Decision Tree Regression")
+    ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
+    start = '2010-01-01'
+    end = '2019-12-31'
+    df = yf.download(ticker, start, end)
+    # Rest of the code for data summary, visualization, and prediction
 
-# Define stock ticker input
-ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
+# SVM Streamlit app
+def svm_app():
+    st.title("Support Vector Machine (SVM)")
+    ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
+    start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
+    # Rest of the code for data fetching, preprocessing, training, and prediction
 
-# Download the data
-start = '2010-01-01'
-end = '2019-12-31'
-df = yf.download(ticker, start, end)
+# LSTM Streamlit app
+def lstm_app():
+    st.title("Long Short-Term Memory (LSTM)")
+    ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
+    start = '2010-01-01'
+    end = '2019-12-31'
+    df = yf.download(ticker, start, end)
+    # Rest of the code for data description, visualization, preprocessing, model loading, and prediction
 
-# Show data summary
-st.subheader("Data Summary")
-st.write(df.head())
-st.write(df.describe())
+# Linear Regression & CNN Streamlit app
+def linear_cnn_app():
+    st.title("Linear Regression and CNN")
+    ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
+    start_date = st.sidebar.date_input("Start date:", value=pd.to_datetime("2009-01-01"))
+    end_date = st.sidebar.date_input("End date:", value=pd.to_datetime("2022-12-31"))
+    # Rest of the code for data fetching, correlation analysis, feature selection, scaling, train-test split,
+    # linear regression training and prediction, CNN model training and prediction, and result visualization
 
-# Visualize the data
-st.subheader("Data Visualization")
-fig, axs = plt.subplots(2, 2, figsize=(16, 8))
-fig.suptitle("Stock Prices Over Time")
-axs[0, 0].plot(df['Open'])
-axs[0, 0].set_title("Opening Price")
-axs[0, 1].plot(df['High'])
-axs[0, 1].set_title("High Price")
-axs[1, 0].plot(df['Low'])
-axs[1, 0].set_title("Low Price")
-axs[1, 1].plot(df['Close'])
-axs[1, 1].set_title("Closing Price")
-st.pyplot(fig)
+# App selection
+app_options = {
+    "Decision Tree Regression": decision_tree_app,
+    "SVM": svm_app,
+    "LSTM": lstm_app,
+    "Linear Regression & CNN": linear_cnn_app
+}
 
-# Prepare data for prediction
-df2 = pd.DataFrame(df['Close'])
-df2['Prediction'] = df2['Close'].shift(-100)
-X = np.array(df2.drop(['Prediction'], axis=1))[:-100]
-y = np.array(df2['Prediction'])[:-100]
-x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+app_selection = st.sidebar.selectbox("Select the Stock Predictor App", list(app_options.keys()))
 
-# Train models
-tree = DecisionTreeRegressor().fit(x_train, y_train)
-lr = LinearRegression().fit(x_train, y_train)
-
-# Predict future prices
-future_days = 100
-x_future = df2.drop(['Prediction'], axis=1)[:-future_days]
-x_future = x_future.tail(future_days)
-x_future = np.array(x_future)
-tree_prediction = tree.predict(x_future)
-lr_prediction = lr.predict(x_future)
-
-# Show predictions
-st.subheader("Predictions")
-st.write("Decision Tree Regression Prediction:")
-st.write(tree_prediction)
-st.write("Linear Regression Prediction:")
-st.write(lr_prediction)
-
-# Visualize predictions
-predictions = tree_prediction
-valid = df2[X.shape[0]:]
-valid['Predictions'] = predictions
-fig, ax = plt.subplots(figsize=(16, 8))
-ax.set_title("Stock Prices Over Time")
-ax.set_xlabel("Days")
-ax.set_ylabel("Closing Price USD ($)")
-ax.plot(df2['Close'])
-ax.plot(valid[['Close', 'Predictions']])
-ax.legend(["Original", "Valid", "Predicted"])
-st.pyplot(fig)
-
-# Show model accuracy
-st.subheader("Model Accuracy")
-tree_accuracy = metrics.r2_score(y_test, tree_prediction)
-lr_accuracy = metrics.r2_score(y_test, lr_prediction)
-st.write("Decision Tree Accuracy:", tree_accuracy)
-st.write("Linear Regression Accuracy:", lr_accuracy)
-
-# Sidebar
-st.sidebar.subheader("About")
-st.sidebar.markdown("This app predicts stock prices using decision tree regression and linear regression models.")
-st.sidebar.markdown("The data is downloaded from Yahoo
+if app_selection:
+    app_options[app_selection]()  # Execute the selected app
