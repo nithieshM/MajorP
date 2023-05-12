@@ -91,17 +91,6 @@ def svm_app():
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
     end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
-    
-    split_percentage = st.slider('Training-Testing Set Split Percentage', 0.1, 0.9, 0.8, 0.1)
-
-        # Fetch and split data
-    data = fetch_data(ticker, start, end)
-    X_train, y_train, X_test, y_test = split_data(data, split_percentage)
-
-        # Train model and generate predictions
-    y_pred = train_model(X_train, y_train, X_test)
-    data['Predicted_Signal'] = np.concatenate((np.zeros(len(y_train)), y_pred))
-
     @st.cache
     def fetch_data(ticker, start, end):
         data = yf.download(ticker, start, end)
@@ -142,8 +131,26 @@ def svm_app():
         st.pyplot()
 
     # Define Streamlit app
-    
-        
+
+        st.title('Stock Price Forecasting with SVM')
+        st.write('Enter the stock ticker below to see the SVM-based stock price forecasting and visualization.')
+
+        # Get user inputs
+        ticker = st.text_input('Stock Ticker', 'AAPL')
+        start = st.date_input('Start Date', value=pd.to_datetime('2010-01-01'))
+        end = st.date_input('End Date', value=pd.to_datetime('2022-05-03'))
+        split_percentage = st.slider('Training-Testing Set Split Percentage', 0.1, 0.9, 0.8, 0.1)
+
+        # Fetch and split data
+        data = fetch_data(ticker, start, end)
+        X_train, y_train, X_test, y_test = split_data(data, split_percentage)
+
+        # Train model and generate predictions
+        y_pred = train_model(X_train, y_train, X_test)
+        data['Predicted_Signal'] = np.concatenate((np.zeros(len(y_train)), y_pred))
+
+        # Plot results
+        plot_results(data)
 
     # Rest of the code for data fetching, preprocessing, training, and prediction
 
