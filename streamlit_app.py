@@ -12,7 +12,10 @@ from tensorflow.keras.layers import Flatten, Dense, Conv1D
 from sklearn.metrics import r2_score
 from sklearn import metrics
 
+st.set_option('deprecation.showPyplotGlobalUse', False)
+
 # Set up the page title
+
 st.set_page_config(page_title='Stock Price Forecasting', page_icon=':chart_with_upwards_trend:')
 
 # Set up the sidebar
