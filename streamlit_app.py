@@ -91,7 +91,7 @@ def svm_app():
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
     end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
-    xd()
+    
     @st.cache
     def fetch_data(ticker, start, end):
         data = yf.download(ticker, start, end)
@@ -152,7 +152,7 @@ def svm_app():
 
         # Plot results
         plot_results(data)
-
+    xd()
     # Rest of the code for data fetching, preprocessing, training, and prediction
 
 # LSTM Streamlit app
