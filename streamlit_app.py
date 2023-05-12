@@ -66,9 +66,8 @@ def linear_cnn_app():
     fig, ax = plt.subplots(figsize=(5,5))
     sns.heatmap(cormap, annot=True)
     st.pyplot(fig)
-
+    
     def get_correlated_col(cor_data, threshold):
-    """Function to get columns that are correlated with the target"""
         feature=[]
         value=[]
         for i, index in enumerate(cor_data.index):
