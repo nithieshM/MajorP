@@ -27,6 +27,63 @@ def decision_tree_app():
     end = '2019-12-31'
     df = yf.download(ticker, start, end)
     # Rest of the code for data summary, visualization, and prediction
+    st.subheader("Data Summary")
+    st.write(df.head())
+    st.write(df.describe())
+
+# Visualize the data
+    st.subheader("Data Visualization")
+    fig, axs = plt.subplots(2, 2, figsize=(16, 8))
+    fig.suptitle("Stock Prices Over Time")
+    axs[0, 0].plot(df['Open'])
+    axs[0, 0].set_title("Opening Price")
+    axs[0, 1].plot(df['High'])
+    axs[0, 1].set_title("High Price")
+    axs[1, 0].plot(df['Low'])
+    axs[1, 0].set_title("Low Price")
+    axs[1, 1].plot(df['Close'])
+    axs[1, 1].set_title("Closing Price")
+    st.pyplot(fig)
+
+    # Prepare data for prediction
+    df2 = pd.DataFrame(df['Close'])
+    df2['Prediction'] = df2['Close'].shift(-100)
+    X = np.array(df2.drop(['Prediction'], axis=1))[:-100]
+    y = np.array(df2['Prediction'])[:-100]
+    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Train model
+    tree = DecisionTreeRegressor().fit(x_train, y_train)
+    lr = LinearRegression().fit(x_train, y_train)
+
+    # Predict future prices
+    future_days = 100
+    x_future = df2.drop(['Prediction'], axis=1)[:-future_days]
+    x_future = x_future.tail(future_days)
+    x_future = np.array(x_future)
+    tree_prediction = tree.predict(x_future)
+    lr_prediction = lr.predict(x_future)
+
+    # Show predictions
+    st.subheader("Predictions")
+    st.write("Decision Tree Regression Prediction:")
+    st.write(tree_prediction)
+    st.write("Linear Regression Prediction:")
+    st.write(lr_prediction)
+
+    # Visualize predictions
+    predictions = tree_prediction
+    valid = df2[X.shape[0]:]
+    valid['Predictions'] = predictions
+    fig, ax = plt.subplots(figsize=(16, 8))
+    ax.set_title("Stock Prices Over Time")
+    ax.set_xlabel("Days")
+    ax.set_ylabel("Closing Price USD ($)")
+    ax.plot(df2['Close'])
+    ax.plot(valid[['Close', 'Predictions']])
+    ax.legend(["Original", "Valid", "Predicted"])
+    st.pyplot(fig)
+
 
 # SVM Streamlit app
 def svm_app():
@@ -34,6 +91,66 @@ def svm_app():
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
     end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
+    st.title('Stock Price Forecasting with SVM')
+    st.write('Enter the stock ticker below to see the SVM-based stock price forecasting and visualization.')
+
+        # Get user inputs
+    ticker = st.text_input('Stock Ticker', 'AAPL')
+    start = st.date_input('Start Date', value=pd.to_datetime('2010-01-01'))
+    end = st.date_input('End Date', value=pd.to_datetime('2022-05-03'))
+    split_percentage = st.slider('Training-Testing Set Split Percentage', 0.1, 0.9, 0.8, 0.1)
+
+        # Fetch and split data
+    data = fetch_data(ticker, start, end)
+    X_train, y_train, X_test, y_test = split_data(data, split_percentage)
+
+        # Train model and generate predictions
+    y_pred = train_model(X_train, y_train, X_test)
+    data['Predicted_Signal'] = np.concatenate((np.zeros(len(y_train)), y_pred))
+
+    @st.cache
+    def fetch_data(ticker, start, end):
+        data = yf.download(ticker, start, end)
+        data['Open-Close'] = data.Open - data.Close
+        data['High-Low'] = data.High - data.Low
+        data = data[['Open-Close', 'High-Low', 'Close']]
+        data['Target'] = np.where(data['Close'].shift(-1) > data['Close'], 1, 0)
+        data = data.dropna()
+        return data
+
+    # Define function to split data into train and test sets
+    def split_data(data, split_percentage):
+        split = int(split_percentage * len(data))
+        X_train = data[:split][['Open-Close', 'High-Low']]
+        y_train = data[:split]['Target']
+        X_test = data[split:][['Open-Close', 'High-Low']]
+        y_test = data[split:]['Target']
+        return X_train, y_train, X_test, y_test
+
+    # Define function to train SVM model and generate predictions
+    def train_model(X_train, y_train, X_test):
+        clf = SVC().fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        return y_pred
+
+    # Define function to plot the results
+    def plot_results(data):
+        data['Return'] = data.Close.pct_change()
+        data['Strategy_Return'] = data.Return * data.Predicted_Signal.shift(1)
+        data['Cum_Ret'] = data['Return'].cumsum()
+        data['Cum_Strategy'] = data['Strategy_Return'].cumsum()
+
+        plt.plot(data['Cum_Ret'], color='red', label='Buy and Hold')
+        plt.plot(data['Cum_Strategy'], color='blue', label='SVM Strategy')
+        plt.legend()
+        plt.xlabel('Date')
+        plt.ylabel('Cumulative Returns')
+        st.pyplot()
+
+    # Define Streamlit app
+    
+        
+
     # Rest of the code for data fetching, preprocessing, training, and prediction
 
 # LSTM Streamlit app
