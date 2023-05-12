@@ -137,9 +137,7 @@ def svm_app():
         st.write('Enter the stock ticker below to see the SVM-based stock price forecasting and visualization.')
 
         # Get user inputs
-        ticker = st.text_input('Stock Ticker', 'AAPL')
-        start = st.date_input('Start Date', value=pd.to_datetime('2010-01-01'))
-        end = st.date_input('End Date', value=pd.to_datetime('2022-05-03'))
+        
         split_percentage = st.slider('Training-Testing Set Split Percentage', 0.1, 0.9, 0.8, 0.1)
 
         # Fetch and split data
