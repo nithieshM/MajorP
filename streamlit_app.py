@@ -47,7 +47,6 @@ def linear_cnn_app():
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
     start_date = st.sidebar.date_input("Start date:", value=pd.to_datetime("2009-01-01"))
     end_date = st.sidebar.date_input("End date:", value=pd.to_datetime("2022-12-31"))
-    # Download the stock data
     data = yf.download(ticker, start_date, end_date)
     df = pd.DataFrame(data)
     df.dropna(inplace=True)
@@ -71,9 +70,9 @@ def linear_cnn_app():
         feature=[]
         value=[]
         for i, index in enumerate(cor_data.index):
-        if abs(cor_data[index]) > threshold:
-            feature.append(index)
-            value.append(cor_data[index])
+            if abs(cor_data[index]) > threshold:
+                feature.append(index)
+                value.append(cor_data[index])
         df = pd.DataFrame(data=value, index=feature, columns=['corr value'])
         return df.index
 
