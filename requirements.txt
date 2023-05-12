@@ -1,9 +1,9 @@
 altair
-pandas
 streamlit
 numpy
+pandas
 matplotlib
-plotly
-tensorflow
-yfinance
 seaborn
+yfinance
+scikit-learn
+tensorflow
