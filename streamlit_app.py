@@ -131,7 +131,7 @@ def svm_app():
         st.pyplot()
 
     # Define Streamlit app
-
+    def main():
         st.title('Stock Price Forecasting with SVM')
         st.write('Enter the stock ticker below to see the SVM-based stock price forecasting and visualization.')
 
@@ -151,6 +151,8 @@ def svm_app():
 
         # Plot results
         plot_results(data)
+if __name__ == '__main__':
+    main()
 
     # Rest of the code for data fetching, preprocessing, training, and prediction
 
