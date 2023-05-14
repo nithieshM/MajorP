@@ -403,7 +403,7 @@ def sentiment_analysis_app():
         sentiments.append(sentiment)
 
     # Get stock data for the company
-    #ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
+    ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
     end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
     stock_data = yf.download(ticker, start, end)
