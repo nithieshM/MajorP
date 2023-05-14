@@ -379,11 +379,14 @@ def sentiment_analysis_app():
     newsapi = NewsApiClient(api_key='25719ac8916b402090ca6aafc17b12e6')
 
     # Set up Streamlit app
+    
+
+# Set up Streamlit app
     st.title('Sentiment Analysis for Stock Price Prediction')
     company_symbol = st.text_input('Enter a company symbol (e.g., AAPL for Apple):')
 
     # Fetch news articles
-    news_articles = newsapi.get_everything(q=company_symbol, language='en', sort_by='publishedAt', page_size=10)
+    news_articles = newsapi.get_everything(qInTitle=company_symbol, language='en', sort_by='publishedAt', page_size=10)
 
     # Analyze sentiment for each article
     sentiments = []
