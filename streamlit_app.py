@@ -173,7 +173,7 @@ def decision_tree_app():
             *Sentiments are given by the nltk.sentiment.vader Python library.*
         """.format(ticker))
 
-   
+   xdd()
     
 
 
