@@ -107,12 +107,38 @@ def decision_tree_app():
         return news_table
 
     def parse_news(news_table):
-        news_list = []
-        for x in news_table:
-            if x.a is not None:
-                text = x.a.get_text()
-                news_list.append(text)
-        return news_list
+        parsed_news = []
+
+        for x in news_table.findAll('tr'):
+            a_tag = x.a
+            if a_tag is not None:
+                # Read the text from the `a` tag
+                text = a_tag.get_text()
+
+                # Split text in the `td` tag into a list
+                date_scrape = x.td.text.split()
+
+                if len(date_scrape) == 1:
+                    # If the length of `date_scrape` is 1, load `time` as the only element
+                    time = date_scrape[0]
+                else:
+                    # Else, load `date` as the 1st element and `time` as the second
+                    date = date_scrape[0]
+                    time = date_scrape[1]
+
+                # Append ticker, date, time, and headline as a list to the `parsed_news` list
+                parsed_news.append([date, time, text])
+
+        # Set column names
+        columns = ['date', 'time', 'headline']
+
+        # Convert the `parsed_news` list into a DataFrame called `parsed_news_df`
+        parsed_news_df = pd.DataFrame(parsed_news, columns=columns)
+
+        # Create a pandas datetime object from the strings in the `date` and `time` columns
+        parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'])
+
+        return parsed_news_df
 
 
     def score_news(parsed_news_df):
