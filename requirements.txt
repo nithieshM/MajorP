@@ -13,3 +13,5 @@ urllib3
 bs4
 plotly
 gunicorn
+newsapi-python
+textblob
