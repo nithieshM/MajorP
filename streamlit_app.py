@@ -150,7 +150,11 @@ def decision_tree_app():
         parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], axis=1)
         parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "sentiment_score"})
 
+        # Convert non-numeric sentiment scores to 0
+        parsed_and_scored_news['sentiment_score'] = pd.to_numeric(parsed_and_scored_news['sentiment_score'], errors='coerce').fillna(0)
+
         return parsed_and_scored_news
+
 
     def plot_hourly_sentiment(parsed_and_scored_news, ticker):
         mean_scores = parsed_and_scored_news.resample('H').mean()
