@@ -8,3 +8,8 @@ yfinance
 scikit-learn
 tensorflow
 pandas_datareader
+nltk
+urllib3
+bs4
+plotly
+gunicorn
