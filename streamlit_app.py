@@ -22,16 +22,6 @@ from textblob import TextBlob
 from datetime import datetime
 
 import json
-import nltk
-nltk.download('vader_lexicon')
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
-# NLTK VADER for sentiment analysis
-nltk.download('vader_lexicon')
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
-# for extracting data from finviz
-finviz_url = 'https://finviz.com/quote.ashx?t='
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -420,6 +410,18 @@ def sentiment_analysis_app():
     st.subheader('Predicted Stock Price')
     predicted_price = stock_data['Close'][-1] + sum(sentiments)
     st.write(f'${predicted_price:.2f}')
+
+    # Categorize sentiment analysis
+    sentiment_category = ""
+    if predicted_price > stock_data["Close"][-1]:
+        sentiment_category = "Positive"
+    elif predicted_price < stock_data["Close"][-1]:
+        sentiment_category = "Negative"
+    else:
+        sentiment_category = "Neutral"
+
+    st.subheader('Sentiment Analysis')
+    st.write(f"Using Sentiment Analysis, the Predicted sentiment category for the given data is: {sentiment_category}")
 
 
 # App selection
