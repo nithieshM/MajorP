@@ -16,6 +16,11 @@ import seaborn as sns
 import plotly.express as px
 import requests
 from bs4 import BeautifulSoup
+
+from newsapi import NewsApiClient
+from textblob import TextBlob
+from datetime import datetime
+
 import json
 import nltk
 nltk.download('vader_lexicon')
@@ -97,102 +102,6 @@ def decision_tree_app():
     ax.plot(valid[['Close', 'Predictions']])
     ax.legend(["Original", "Valid", "Predicted"])
     st.pyplot(fig)
-
-    def get_news(ticker):
-        url = finviz_url + ticker
-        response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'})
-        html = response.text
-        soup = BeautifulSoup(html, 'html.parser')
-        news_table = soup.find(id='news-table')
-        return news_table
-
-    def parse_news(news_table):
-        parsed_news = []
-
-        for x in news_table.findAll('tr'):
-            a_tag = x.a
-            if a_tag is not None:
-                # Read the text from the `a` tag
-                text = a_tag.get_text()
-
-                # Split text in the `td` tag into a list
-                date_scrape = x.td.text.split()
-
-                if len(date_scrape) == 1:
-                    # If the length of `date_scrape` is 1, load `time` as the only element
-                    time = date_scrape[0]
-                else:
-                    # Else, load `date` as the 1st element and `time` as the second
-                    date = date_scrape[0]
-                    time = date_scrape[1]
-
-                # Append ticker, date, time, and headline as a list to the `parsed_news` list
-                parsed_news.append([date, time, text])
-
-        # Set column names
-        columns = ['date', 'time', 'headline']
-
-        # Convert the `parsed_news` list into a DataFrame called `parsed_news_df`
-        parsed_news_df = pd.DataFrame(parsed_news, columns=columns)
-
-        # Create a pandas datetime object from the strings in the `date` and `time` columns
-        parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'])
-
-        return parsed_news_df
-
-
-    def score_news(parsed_news_df):
-        vader = SentimentIntensityAnalyzer()
-        scores = parsed_news_df['headline'].apply(vader.polarity_scores).tolist()
-        scores_df = pd.DataFrame(scores)
-        parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')
-        parsed_and_scored_news = parsed_and_scored_news.set_index('datetime')
-        parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], axis=1)
-        parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "sentiment_score"})
-
-        # Convert non-numeric sentiment scores to 0
-        parsed_and_scored_news['sentiment_score'] = pd.to_numeric(parsed_and_scored_news['sentiment_score'], errors='coerce').fillna(0)
-
-        return parsed_and_scored_news
-
-
-    def plot_hourly_sentiment(parsed_and_scored_news, ticker):
-        mean_scores = parsed_and_scored_news.resample('H').mean()
-        fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title=ticker + ' Hourly Sentiment Scores')
-        return fig
-
-    def plot_daily_sentiment(parsed_and_scored_news, ticker):
-        mean_scores = parsed_and_scored_news.resample('D').mean()
-        fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title=ticker + ' Daily Sentiment Scores')
-        return fig
-
-    def xdd():
-        
-        ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL", key="ticker_input")
-        
-        news_table = get_news(ticker)
-        
-        parsed_news_df = parse_news(news_table)
-        parsed_and_scored_news = score_news(parsed_news_df)
-        fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, ticker)
-        fig_daily = plot_daily_sentiment(parsed_and_scored_news, ticker)
-
-        st.header("Hourly and Daily Sentment of {} Stock".format(ticker))
-        st.plotly_chart(fig_hourly, use_container_width=True)
-        st.plotly_chart(fig_daily, use_container_width=True)
-
-        st.subheader("Recent Headlines")
-        st.dataframe(parsed_and_scored_news[['headline', 'neg', 'neu', 'pos', 'sentiment_score']].head())
-
-        st.markdown("""
-            *The above charts show the average sentiment scores of {} stock on an hourly and daily basis.*
-            *The table displays the most recent headlines of the stock along with their negative, neutral, positive, and aggregated sentiment scores.*
-            *The news headlines are obtained from the FinViz website.*
-            *Sentiments are given by the nltk.sentiment.vader Python library.*
-        """.format(ticker))
-
-    xdd()
-    
 
 
 # SVM Streamlit app
@@ -463,13 +372,56 @@ def linear_cnn_app():
     st.write(f'Accuracy: {acc_cnn}')
     # Rest of the code for data fetching, correlation analysis, feature selection, scaling, train-test split,
     # linear regression training and prediction, CNN model training and prediction, and result visualization
+   
+def sentiment_analysis_app():
+    
+# Set up News API client
+    newsapi = NewsApiClient(api_key='25719ac8916b402090ca6aafc17b12e6')
+
+    # Set up Streamlit app
+    st.title('Sentiment Analysis for Stock Price Prediction')
+    company_symbol = st.text_input('Enter a company symbol (e.g., AAPL for Apple):')
+
+    # Fetch news articles
+    news_articles = newsapi.get_everything(q=company_symbol, language='en', sort_by='publishedAt', page_size=10)
+
+    # Analyze sentiment for each article
+    sentiments = []
+    for article in news_articles['articles']:
+        title = article['title']
+        description = article['description']
+        text = f'{title}. {description}' if description else title
+
+        blob = TextBlob(text)
+        sentiment = blob.sentiment.polarity
+        sentiments.append(sentiment)
+
+    # Get stock data for the company
+    start_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+    end_date = datetime.now().strftime('%Y-%m-%d')
+    stock_data = yf.download(company_symbol, start=start_date, end=end_date, progress=False)
+
+    # Display stock data and sentiment analysis results
+    st.subheader('Stock Data')
+    st.line_chart(stock_data['Close'])
+
+    st.subheader('Sentiment Analysis')
+    for i, sentiment in enumerate(sentiments):
+        st.write(f'Article {i+1}: Sentiment = {sentiment}')
+
+    # Perform stock price prediction based on sentiment
+    predicted_price = stock_data['Close'][-1] + sum(sentiments)
+    st.subheader('Predicted Stock Price')
+    st.write(f'${predicted_price:.2f}')
+
 
 # App selection
 app_options = {
     "Decision Tree Regression": decision_tree_app,
     "SVM": svm_app,
     "LSTM": lstm_app,
-    "Linear Regression & CNN": linear_cnn_app
+    "Linear Regression & CNN": linear_cnn_app,
+    "Sentiment Analysis" : sentiment_analysis_app
 }
 
 app_selection = st.sidebar.selectbox("Select the Stock Predictor App", list(app_options.keys()))
