@@ -92,6 +92,7 @@ def svm_app():
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
     end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
     
+    
     @st.cache
     def fetch_data(ticker, start, end):
         data = yf.download(ticker, start, end)
@@ -100,6 +101,18 @@ def svm_app():
         data = data[['Open-Close', 'High-Low', 'Close']]
         data['Target'] = np.where(data['Close'].shift(-1) > data['Close'], 1, 0)
         data = data.dropna()
+        st.subheader("Data Visualization")
+        fig, axs = plt.subplots(2, 2, figsize=(16, 8))
+        fig.suptitle("Stock Prices Over Time")
+        axs[0, 0].plot(df['Open'])
+        axs[0, 0].set_title("Opening Price")
+        axs[0, 1].plot(df['High'])
+        axs[0, 1].set_title("High Price")
+        axs[1, 0].plot(df['Low'])
+        axs[1, 0].set_title("Low Price")
+        axs[1, 1].plot(df['Close'])
+        axs[1, 1].set_title("Closing Price")
+        st.pyplot(fig)
         return data
 
     # Define function to split data into train and test sets
@@ -162,6 +175,19 @@ def lstm_app():
     df = yf.download(ticker, start, end)
     st.subheader('Data from 2010-2019')
     st.write(df.describe())
+
+    st.subheader("Data Visualization")
+    fig, axs = plt.subplots(2, 2, figsize=(16, 8))
+    fig.suptitle("Stock Prices Over Time")
+    axs[0, 0].plot(df['Open'])
+    axs[0, 0].set_title("Opening Price")
+    axs[0, 1].plot(df['High'])
+    axs[0, 1].set_title("High Price")
+    axs[1, 0].plot(df['Low'])
+    axs[1, 0].set_title("Low Price")
+    axs[1, 1].plot(df['Close'])
+    axs[1, 1].set_title("Closing Price")
+    st.pyplot(fig)
 
     #Visualizations
     st.subheader('Closing Price vs Time chart')
@@ -245,6 +271,18 @@ def linear_cnn_app():
     data = yf.download(ticker, start_date, end_date)
     df = pd.DataFrame(data)
     df.dropna(inplace=True)
+    st.subheader("Data Visualization")
+    fig, axs = plt.subplots(2, 2, figsize=(16, 8))
+    fig.suptitle("Stock Prices Over Time")
+    axs[0, 0].plot(df['Open'])
+    axs[0, 0].set_title("Opening Price")
+    axs[0, 1].plot(df['High'])
+    axs[0, 1].set_title("High Price")
+    axs[1, 0].plot(df['Low'])
+    axs[1, 0].set_title("Low Price")
+    axs[1, 1].plot(df['Close'])
+    axs[1, 1].set_title("Closing Price")
+    st.pyplot(fig)
 
 # Show column wise %ge of NaN values they contain
     st.subheader('Data')
