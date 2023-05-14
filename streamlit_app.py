@@ -374,25 +374,24 @@ def linear_cnn_app():
     # linear regression training and prediction, CNN model training and prediction, and result visualization
    
 def sentiment_analysis_app():
-    
-# Set up News API client
+
+    # Set up News API client
     newsapi = NewsApiClient(api_key='25719ac8916b402090ca6aafc17b12e6')
 
     # Set up Streamlit app
-    
-
-# Set up Streamlit app
     st.title('Sentiment Analysis for Stock Price Prediction')
     company_symbol = st.text_input('Enter a company symbol (e.g., AAPL for Apple):')
 
     # Fetch news articles
-    news_articles = newsapi.get_top_headlines(q=company_symbol, language='en', page_size=10)
+    news_articles = newsapi.get_everything(q=company_symbol, language='en',sort_by='publishedAt', page_size=10)
 
     # Filter news articles based on company symbol
-    filtered_articles = [article for article in news_articles['articles'] if company_symbol in article['title'] or company_symbol in article['description']]
+    filtered_articles = [article for article in news_articles['articles'] if
+                         company_symbol in article['title'] or company_symbol in article['description']]
 
     # Analyze sentiment for each article
     sentiments = []
+    article_count = 0
     for article in filtered_articles:
         title = article['title']
         description = article['description']
@@ -401,6 +400,14 @@ def sentiment_analysis_app():
         blob = TextBlob(text)
         sentiment = blob.sentiment.polarity
         sentiments.append(sentiment)
+
+        # Display article information
+        if article_count < 5:
+            st.subheader(f'Article {article_count+1}')
+            st.write(f'Title: {title}')
+            st.write(f'Description: {description}')
+            st.write(f'Sentiment: {sentiment}')
+            article_count += 1
 
     # Get stock data for the company
     ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
@@ -412,13 +419,11 @@ def sentiment_analysis_app():
     st.subheader('Stock Data')
     st.line_chart(stock_data['Close'])
 
-    st.subheader('Sentiment Analysis')
-    for i, sentiment in enumerate(sentiments):
-        st.write(f'Article {i+1}: Sentiment = {sentiment}')
+    st.subheader('Actual Stock Price')
+    st.write(f'${stock_data["Close"][-1]:.2f}')
 
-    # Perform stock price prediction based on sentiment
-    predicted_price = stock_data['Close'][-1] + sum(sentiments)
     st.subheader('Predicted Stock Price')
+    predicted_price = stock_data['Close'][-1] + sum(sentiments)
     st.write(f'${predicted_price:.2f}')
 
 
