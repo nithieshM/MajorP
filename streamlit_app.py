@@ -101,18 +101,6 @@ def svm_app():
         data = data[['Open-Close', 'High-Low', 'Close']]
         data['Target'] = np.where(data['Close'].shift(-1) > data['Close'], 1, 0)
         data = data.dropna()
-        st.subheader("Data Visualization")
-        fig, axs = plt.subplots(2, 2, figsize=(16, 8))
-        fig.suptitle("Stock Prices Over Time")
-        axs[0, 0].plot(data['Open'])
-        axs[0, 0].set_title("Opening Price")
-        axs[0, 1].plot(data['High'])
-        axs[0, 1].set_title("High Price")
-        axs[1, 0].plot(data['Low'])
-        axs[1, 0].set_title("Low Price")
-        axs[1, 1].plot(data['Close'])
-        axs[1, 1].set_title("Closing Price")
-        st.pyplot(fig)
         return data
 
     # Define function to split data into train and test sets
