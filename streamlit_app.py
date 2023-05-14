@@ -401,14 +401,7 @@ def sentiment_analysis_app():
         sentiment = blob.sentiment.polarity
         sentiments.append(sentiment)
 
-        # Display article information
-        if article_count < 5:
-            st.subheader(f'Article {article_count+1}')
-            st.write(f'Title: {title}')
-            st.write(f'Description: {description}')
-            st.write(f'Sentiment: {sentiment}')
-            article_count += 1
-
+     
     # Get stock data for the company
     ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
