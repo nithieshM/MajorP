@@ -150,7 +150,7 @@ def decision_tree_app():
 
     def xdd():
         
-        ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
+        ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL", key="ticker_input")
         
         news_table = get_news(ticker)
         
