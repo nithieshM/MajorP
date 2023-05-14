@@ -23,8 +23,8 @@ st.set_page_config(page_title="Stock Predictor", page_icon=":chart_with_upwards_
 def decision_tree_app():
     st.title("Decision Tree Regression")
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
-    start = '2010-01-01'
-    end = '2019-12-31'
+    start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
     df = yf.download(ticker, start, end)
     # Rest of the code for data summary, visualization, and prediction
     st.subheader("Data Summary")
@@ -157,8 +157,8 @@ def svm_app():
 def lstm_app():
     st.title("Long Short-Term Memory (LSTM)")
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
-    start = '2010-01-01'
-    end = '2019-12-31'
+    start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
     df = yf.download(ticker, start, end)
     st.subheader('Data from 2010-2019')
     st.write(df.describe())
