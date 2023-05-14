@@ -84,7 +84,7 @@ def decision_tree_app():
     ax.legend(["Original", "Valid", "Predicted"])
     st.pyplot(fig)
     
-    st.subheader(“Hourly and Daily Sentiment of {} Stock”.format(ticker))
+    st.subheader("Hourly and Daily Sentiment of {} Stock".format(ticker))
     news_table = get_news(ticker)
     parsed_news_df = parse_news(news_table)
     parsed_and_scored_news = score_news(parsed_news_df)
