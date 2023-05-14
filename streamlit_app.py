@@ -386,7 +386,7 @@ def sentiment_analysis_app():
     company_symbol = st.text_input('Enter a company symbol (e.g., AAPL for Apple):')
 
     # Fetch news articles
-    news_articles = newsapi.get_everything(q=company_symbol, language='en', sort_by='publishedAt', page_size=10)
+    news_articles = newsapi.get_top_headlines(q=company_symbol, language='en', sort_by='publishedAt', page_size=10)
 
     # Filter news articles based on company symbol
     filtered_articles = [article for article in news_articles['articles'] if company_symbol in article['title'] or company_symbol in article['description']]
