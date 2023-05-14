@@ -151,6 +151,7 @@ def svm_app():
 
         # Plot results
         plot_results(data)
+        st.write(y_pred)
     xd()
     # Rest of the code for data fetching, preprocessing, training, and prediction
 
