@@ -147,7 +147,7 @@ def decision_tree_app():
         scores_df = pd.DataFrame(scores)
         parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')
         parsed_and_scored_news = parsed_and_scored_news.set_index('datetime')
-        parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], 1)
+        parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], axis=1)
         parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "sentiment_score"})
 
         return parsed_and_scored_news
