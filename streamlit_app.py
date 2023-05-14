@@ -376,8 +376,9 @@ def linear_cnn_app():
 def sentiment_analysis_app():
 
     # Set up News API client
-    ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
-    company_symbol = ticker
+    company_symbol = st.text_input('Enter a company symbol (e.g., AAPL for Apple):')
+
+    
     newsapi = NewsApiClient(api_key='25719ac8916b402090ca6aafc17b12e6')
 
     # Set up Streamlit app
@@ -404,7 +405,7 @@ def sentiment_analysis_app():
 
      
     # Get stock data for the company
-    
+    ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
     end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
     stock_data = yf.download(ticker, start, end)
