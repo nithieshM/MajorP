@@ -107,25 +107,13 @@ def decision_tree_app():
         return news_table
 
     def parse_news(news_table):
-        parsed_news = []
+        news_list = []
+        for x in news_table:
+            if x.a is not None:
+                text = x.a.get_text()
+                news_list.append(text)
+        return news_list
 
-        for x in news_table.findAll('tr'):
-            text = x.a.get_text()
-            date_scrape = x.td.text.split()
-
-            if len(date_scrape) == 1:
-                time = date_scrape[0]
-            else:
-                date = date_scrape[0]
-                time = date_scrape[1]
-
-            parsed_news.append([date, time, text])
-
-        columns = ['date', 'time', 'headline']
-        parsed_news_df = pd.DataFrame(parsed_news, columns=columns)
-        parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'])
-
-        return parsed_news_df
 
     def score_news(parsed_news_df):
         vader = SentimentIntensityAnalyzer()
