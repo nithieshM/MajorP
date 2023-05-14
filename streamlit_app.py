@@ -403,9 +403,10 @@ def sentiment_analysis_app():
         sentiments.append(sentiment)
 
     # Get stock data for the company
-    start_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
-    end_date = datetime.now().strftime('%Y-%m-%d')
-    stock_data = yf.download(company_symbol, start=start_date, end=end_date, progress=False)
+    #ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
+    start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
+    stock_data = yf.download(ticker, start, end)
 
     # Display stock data and sentiment analysis results
     st.subheader('Stock Data')
