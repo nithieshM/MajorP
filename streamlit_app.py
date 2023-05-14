@@ -380,7 +380,6 @@ def sentiment_analysis_app():
 
     # Set up Streamlit app
     st.title('Sentiment Analysis for Stock Price Prediction')
-    company_symbol = st.text_input('Enter a company symbol (e.g., AAPL for Apple):')
 
     # Fetch news articles
     news_articles = newsapi.get_top_headlines(q=company_symbol, language='en', page_size=10)
