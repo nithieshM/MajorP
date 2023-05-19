@@ -148,7 +148,7 @@ def svm_app():
 
         # Get user inputs
         
-        split_percentage = st.slider('Training-Testing Set Split Percentage', 0.1, 0.9, 0.8, 0.1)
+        split_percentage = (0.1, 0.1)
 
         # Fetch and split data
         data = fetch_data(ticker, start, end)
