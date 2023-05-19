@@ -114,7 +114,7 @@ def svm_app():
 
     # Define function to split data into train and test sets
     def split_data(data, split_percentage):
-        split = int(len(data))
+        split = int(split_percentage * len(data))
         X_train = data[:split][['Open-Close', 'High-Low']]
         y_train = data[:split]['Target']
         X_test = data[split:][['Open-Close', 'High-Low']]
