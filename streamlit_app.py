@@ -33,7 +33,7 @@ def decision_tree_app():
     st.title("Decision Tree Regression")
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
-    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-12-31"))
     df = yf.download(ticker, start, end)
     # Rest of the code for data summary, visualization, and prediction
     st.subheader("Data Summary")
@@ -99,7 +99,7 @@ def svm_app():
     st.title("Support Vector Machine (SVM)")
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
-    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-12-31"))
     
     
     @st.cache
@@ -169,7 +169,7 @@ def lstm_app():
     st.title("Long Short-Term Memory (LSTM)")
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
-    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-12-31"))
     df = yf.download(ticker, start, end)
     st.subheader('Data from 2010-2019')
     st.write(df.describe())
@@ -264,7 +264,7 @@ def lstm_app():
 def linear_cnn_app():
     st.title("Linear Regression and CNN")
     ticker = st.sidebar.text_input("Enter stock ticker (e.g. AAPL for Apple)", "AAPL")
-    start_date = st.sidebar.date_input("Start date:", value=pd.to_datetime("2009-01-01"))
+    start_date = st.sidebar.date_input("Start date:", value=pd.to_datetime("2010-01-01"))
     end_date = st.sidebar.date_input("End date:", value=pd.to_datetime("2022-12-31"))
     data = yf.download(ticker, start_date, end_date)
     df = pd.DataFrame(data)
@@ -397,7 +397,7 @@ def sentiment_analysis_app():
     # Get stock data for the company
     ticker = st.sidebar.text_input("Enter stock ticker for sentiment analysis (e.g. AAPL for Apple)", "AAPL")
     start = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
-    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-05-03"))
+    end = st.sidebar.date_input("End Date", value=pd.to_datetime("2022-12-31"))
     stock_data = yf.download(ticker, start, end)
 
     # Display stock data and sentiment analysis results
