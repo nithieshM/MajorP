@@ -148,7 +148,7 @@ def svm_app():
 
         # Get user inputs
         
-        split_percentage = 0.1
+        split_percentage = 0
 
         # Fetch and split data
         data = fetch_data(ticker, start, end)
